@@ -11,7 +11,8 @@ This repository contains professional notes on mathematical writing, featuring L
 
 ## Building Locally
 
-```bash
-# Install required packages (Ubuntu/Debian)
-sudo apt-get install texlive-full latexmk
+# Build PDF
+latexmk -pdf -interaction=nonstopmode main.tex
 
+# Clean temporary files
+latexmk -c
