@@ -10,7 +10,7 @@ This repository contains professional notes on mathematical writing, featuring L
 - Automated build and spell checking workflows
 
 ## Build PDF
-latexmk -pdf -interaction=nonstopmode main.tex
+latexmk -pdf main.tex
 
 ## Clean temporary files
 latexmk -c
