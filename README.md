@@ -9,10 +9,8 @@ This repository contains professional notes on mathematical writing, featuring L
 - Professional typesetting with tcolorbox and amsmath packages
 - Automated build and spell checking workflows
 
-## Building Locally
-
-# Build PDF
+## Build PDF
 latexmk -pdf -interaction=nonstopmode main.tex
 
-# Clean temporary files
+## Clean temporary files
 latexmk -c
