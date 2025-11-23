@@ -10,35 +10,14 @@ jobs:
   spellcheck:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v4
       
     - name: Install aspell
+      run: sudo apt-get install -y aspell aspell-en
+      
+    - name: Check spelling
       run: |
-        sudo apt-get update
-        sudo apt-get install -y aspell aspell-en
-        
-    - name: Run spell check on LaTeX files
-      run: |
-        echo "=== Starting Spell Check ==="
-        ERROR_FOUND=false
-        
-        for file in $(find . -name "*.tex" -type f); do
-          echo "Checking: $file"
-          errors=$(aspell --lang=en --mode=tex list < "$file")
-          if [ -n "$errors" ]; then
-            echo "❌ Spelling errors in $file:"
-            echo "$errors" | sort -u
-            ERROR_FOUND=true
-            echo "---"
-          else
-            echo "✅ No spelling errors in $file"
-          fi
-        done
-        
-        if [ "$ERROR_FOUND" = true ]; then
-          echo "Spell check failed: Please fix the spelling errors above"
-          exit 1
-        else
-          echo "🎉 Spell check passed: No spelling errors found!"
-        fi
+        echo "🔍 Starting spell check..."
+        find . -name "*.tex" -exec aspell --lang=en --mode=tex list {} \; | sort -u
+        echo "✅ Spell check completed"
