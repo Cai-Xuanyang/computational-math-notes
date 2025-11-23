@@ -1,0 +1,39 @@
+name: Build PDF
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/xu-cheng/texlive-full:latest
+      
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Compile LaTeX document
+      run: |
+        echo "Compiling LaTeX document..."
+        latexmk -pdf -interaction=nonstopmode main.tex
+        
+    - name: Verify PDF generation
+      run: |
+        if [ -f "main.pdf" ]; then
+          echo "PDF successfully generated: main.pdf"
+          ls -la main.pdf
+        else
+          echo "Error: PDF was not generated"
+          exit 1
+        fi
+        
+    - name: Upload PDF artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: mathematical-notes-pdf
+        path: main.pdf
+        retention-days: 30

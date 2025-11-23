@@ -1,0 +1,759 @@
+%\documentclass[12pt,a4paper]{article}  % Use this line if this document will be released
+\documentclass[12pt,a4paper,draft]{article}  % Use this line if this document is a draft
+\usepackage{ifdraft}
+
+
+%% Bibliography
+\usepackage{etoolbox}
+\newcommand{\bibfile}{\jobname.bib}  % Name of the BibTeX file.
+% ref.bib should be a symbolic link to the universal BibTeX file, which should be a local copy of
+% https://github.com/equipez/bibliographie/blob/main/ref.bib
+% Run `getbib` in the current directory under the draft mode to get the BibTeX file containing only
+% the cited references. The name will be xyz.bib if this TeX file is xyz.tex.
+\newcommand{\universalbib}{ref.bib}
+\ifdraft{\IfFileExists{\universalbib}{\renewcommand{\bibfile}{\universalbib}}{}}{}
+% The counter `cite' is used to count the number of citations.
+\newcounter{cite}
+\pretocmd{\cite}{\stepcounter{cite}}{}{}
+
+
+%% Add line numbers in draft mode
+\RequirePackage[mathlines]{lineno}
+\ifdraft{\linenumbers}{}
+\renewcommand{\linenumberfont}{\normalfont\scriptsize\sffamily\color{gray}}
+\setlength{\linenumbersep}{\marginparsep}
+
+
+%% Geometry
+%\voffset=-1.5cm \hoffset=-1.4cm \textwidth=16cm \textheight=22.0cm  % Luis' setting
+\usepackage[a4paper, textwidth=16.0cm, textheight=22.0cm]{geometry}
+\renewcommand{\baselinestretch}{1.2}
+
+
+%% Basic packages
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\usepackage{mathtools}  % Provides \coloneqq
+\usepackage{empheq}
+\usepackage{xcolor}
+\usepackage[bbgreekl]{mathbbol}
+\DeclareSymbolFontAlphabet{\mathbbm}{bbold}
+\DeclareSymbolFontAlphabet{\mathbb}{AMSb}
+\usepackage{bbm}
+\usepackage{upgreek}
+\usepackage{accents}
+\usepackage{xspace}
+\usepackage{rotating}
+\usepackage{multirow,booktabs}
+\usepackage[en-US]{datetime2}
+
+
+%% Format of the table of content
+\usepackage[normalem]{ulem}
+\usepackage[toc,page]{appendix}
+\renewcommand{\appendixpagename}{\Large{Appendix}}
+\renewcommand{\appendixname}{Appendix}
+\renewcommand{\appendixtocname}{Appendix}
+%\usepackage{sectsty}
+\setcounter{tocdepth}{2}
+
+
+%% Section title style
+\usepackage{sectsty}
+\sectionfont{\large}
+\subsectionfont{\large}
+
+
+%% Some colors
+\definecolor{darkblue}{rgb}{0,0.1,0.5}
+\definecolor{darkgreen}{rgb}{0,0.5,0.1}
+\definecolor{darkyellow}{rgb}{0.65,0.65,0.01}
+
+
+%% Todo notes
+\ifdraft{
+	\setlength{\marginparwidth}{2.42cm}
+	\usepackage[tickmarkheight=3pt,textsize=small,backgroundcolor=blue!16,linecolor=purple,bordercolor=purple]{todonotes}
+}{
+	\newcommand{\todo}[1]{}
+	\newcommand{\listoftodos}{}
+}
+
+
+%% Graph, tikz and pgf
+%\usepackage{subfigure}
+\setlength{\unitlength}{1mm}
+% The \unitlength command is a Length command. It defines the units used in the Picture Environment.
+\usepackage{graphicx}
+%\usepackage{tikz,tikzscale,pgf,pgfarrows,pgfnodes,filecontents,tikz-cd}
+\usepackage{tikz,tikzscale,pgf}
+\usetikzlibrary{arrows,arrows.meta,patterns,positioning,decorations.markings,shapes}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage[justification=centering]{caption}
+\usepgfplotslibrary{fillbetween}
+\pgfplotsset{compat=1.11}
+
+
+%% Turn off some unharmful warnings in draft mode
+%% N.B.: DO NOT use `silence` together with `hyperref`. They will cause an infinite loop.
+\ifdraft{
+	\usepackage{silence}
+	\WarningFilter{xcolor}{Incompatible color definition on}
+	\WarningFilter{hyperref}{Draft mode on}
+	\WarningFilter{refcheck}{Unused label}
+	\WarningFilter{microtype}{`draft' option active}
+	\WarningFilter{latex}{Writing or overwriting file} % Mute the warning about 'writing/overwriting file'
+	\WarningFilter{latex}{Writing file} % Mute the warning about 'writing/overwriting file'
+	\WarningFilter{latex}{Tab has} % Mute the warning about 'Tab has been converted to Blank Space'
+	\WarningFilter{latex}{Marginpar on page} % Mute the warning about 'Marginpar on page xx moved'
+	\WarningFilter{latex}{author given} % Mute the warning about 'No \author given'
+}{}
+
+
+%% Hyperref, url, and email
+%% N.B.: DO NOT use `silence` together with `hyperref`. They will cause an infinite loop.
+\ifdraft{\usepackage{refcheck}\newcommand{\url}{\texttt}}{
+	\usepackage{hyperref}
+	\hypersetup{colorlinks, linkcolor=darkblue, anchorcolor=darkblue, citecolor=darkblue, urlcolor=darkblue}
+	\usepackage{url}
+} % Check unused labels
+\newcommand{\email}{\texttt}
+
+
+%% Enumerate and itemize
+\usepackage{eqlist}
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=*}
+\setlist[enumerate]{leftmargin=*,label=\normalfont{(\alph*)}}
+
+
+%% Algorithm environment
+\usepackage[section]{algorithm}
+\usepackage{algpseudocode,algorithmicx}
+\newcommand{\INPUT}{\textbf{Input}}
+\newcommand{\FOR}{\textbf{For}~}
+\algrenewcommand\algorithmicrequire{\textbf{Input:}}
+\algrenewcommand\algorithmicensure{\textbf{Output:}}
+\algrenewcommand\alglinenumber[1]{\normalsize #1.}
+\newcommand*\Let[2]{\State #1 $=$ #2}
+
+
+%% Theorem-like environments
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{conjecture}{Conjecture}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{exercise}{Exercise}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{problem}{Problem}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{assumption}{Assumption}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{question}{Question}[section]
+% Change theoremstyle to ``definition'', which uses textnormal for the text.
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}[section]
+% proof
+\usepackage{xpatch}
+\xpatchcmd{\proof}{\itshape}{\normalfont\proofnamefont}{}{}
+\newcommand{\proofnamefont}{\bfseries}
+
+%% Equation numbering
+\numberwithin{equation}{section}
+
+
+%% Fine tuning
+\usepackage{microtype}
+\usepackage[nobottomtitles*]{titlesec} % No section title at the bottom of pages
+% Prevent footnote from running to the next page
+\interfootnotelinepenalty=10000
+% No line break in inline math
+\interdisplaylinepenalty=10000
+\relpenalty=10000
+\binoppenalty=10000
+% No widow or orphan lines
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+
+
+% Use @ to put 1 math unit (mu) in math
+% See https://nhigham.com/2013/01/07/fine-tuning-spacing-in-latex-equations/
+% and also TeXbook p. 155.
+\mathcode`@="8000{\catcode`\@=\active\gdef@{\mkern1mu}}
+
+
+%% Operators, commands
+\usepackage{relsize}
+\usepackage{nccmath}
+%\DeclareMathOperator*{\mcap}{\,\medmath{\bigcap}\,}
+%\DeclareMathOperator*{\mcup}{\,\medmath{\bigcup}\,}
+\DeclareMathOperator*{\mcap}{\,\mathsmaller{\bigcap}\,}
+\DeclareMathOperator*{\mcup}{\,\mathsmaller{\bigcup}\,}
+%\renewcommand{\cap}{\mcap}
+%\renewcommand{\cup}{\mcup}
+
+\newcommand{\ceil}[1]{ {\lceil{#1}\rceil} }
+\newcommand{\floor}[1]{ {\lfloor{#1}\rfloor} }
+
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\sort}{sort}
+\DeclareMathOperator*{\Argmax}{Argmax}
+\DeclareMathOperator*{\Argmin}{Argmin}
+\DeclareMathOperator*{\Arglocmin}{Arglocmin}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\diag}{diag}
+\DeclareMathOperator*{\Diag}{Diag}
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\med}{med}
+\DeclareMathOperator{\essinf}{essinf}
+\DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\vol}{vol}
+\DeclareMathOperator{\comp}{C}
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\range}{range}
+\DeclareMathOperator{\card}{card}
+\DeclareMathOperator{\diam}{diam}
+\DeclareMathOperator{\dist}{dist}
+\newcommand{\disth}{{\operatorname{\updelta_{\sss{H}}}}}
+\newcommand{\ind}{\mathbbm{1}}
+%\newcommand*{\defeq}{\stackrel{\mbox{\normalfont\tiny{\textnormal{def}}}}{=}}
+\newcommand\defeq{\mathrel{\overset{\makebox[0pt]{\mbox{\normalfont\tiny\sffamily def}}}{=}}}
+
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\BB}{\mathcal{B}}
+\renewcommand{\SS}{\mathbb{S}}
+\newcommand{\TT}{\mathcal{T}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\FF}{\mathcal{F}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\XX}{\mathcal{X}}
+\newcommand{\sset}{\mathcal{S}}
+\newcommand{\pen}{h}
+\newcommand{\penpar}{\mu}
+\newcommand{\res}{\rho}
+\newcommand{\col}{r}
+\newcommand{\ofd}{\mathcal{F}}
+\newcommand{\stf}[1]{\mathbb{S}^{#1}}
+\newcommand{\sss}[1]{{\scriptscriptstyle{#1}}}
+\newcommand{\sK}{{\scriptscriptstyle{K}}}
+\newcommand{\sT}{{\scriptscriptstyle{T}}}
+\newcommand{\fro}{{\scriptstyle{\textnormal{F}}}}
+\newcommand{\trs}{{\scriptstyle{\mathsf{T}}}}
+\newcommand{\hmt}{{\scriptstyle{{\mathsf{H}}}}}
+\newcommand{\pin}{{\scriptstyle{{\mathsf{+}}}}}
+\newcommand{\inv}{{-1}}
+\newcommand{\adj}{*}
+\newcommand{\ones}{\mathbf{1}}
+
+\newcommand{\cs}{\text{c}}
+\newcommand{\hp}{\circ}
+\newcommand{\cc}{\sss{\textnormal{C}}}
+\newcommand{\dec}{\sss{\textnormal{D}}}
+\newcommand{\cauchy}{\sss{\textnormal{C}}}
+\newcommand{\scauchy}{\sss{\textnormal{S}}}
+\newcommand{\crit}{\textnormal{crit}}
+\newcommand{\rsg}{\hat{\partial}}
+\newcommand{\gsg}{\partial}
+\newcommand{\dom}{\textnormal{dom}}
+\newcommand{\tf}{{\textnormal{f}}}
+\newcommand{\tg}{{\textnormal{g}}}
+\newcommand{\ts}{{\textnormal{s}}}
+\newcommand{\st}{\textnormal{s.t.}}
+\newcommand{\etc}{{etc.}\xspace}
+\newcommand{\ie}{{i.e.}\xspace}
+\newcommand{\eg}{{e.g.}\xspace}
+\newcommand{\etal}{{et al.}\xspace}
+\newcommand{\iid}{\text{i.i.d.}\xspace}
+\newcommand{\as}{\text{a.s.}\xspace}
+
+\newcommand{\me}{\mathrm{e}}
+\newcommand{\md}{\mathrm{d}}
+\newcommand{\mi}{\mathrm{i}}
+\newcommand{\lev}{\mathrm{lev}}
+\newcommand{\bA}{\mathbf{A}}
+\newcommand{\bx}{\mathbf{u}}
+%\newcommand{\bb}{\mathbf{f}}
+\newcommand{\bb}{\mathbf{r}}
+\newcommand{\nov}{n_{\textnormal{o}}}
+\xspaceaddexceptions{]\}}
+% tex.stackexchange.com/questions/15252/why-does-xspace-behave-differently-for-parenthesis-vs-braces-brackets
+\newcommand{\MATLAB}{\textsc{Matlab}\xspace}
+\newcommand{\octave}{\mbox{GNU Octave}\xspace}
+\newcommand{\prblm}{\texttt}
+\DeclareMathAlphabet{\mathsfit}{T1}{\sfdefault}{\mddefault}{\sldefault}
+\SetMathAlphabet{\mathsfit}{bold}{T1}{\sfdefault}{\bfdefault}{\sldefault}
+\newcommand{\prbb}{\mathsfit{p}}
+\newcommand{\pp}{\mathsf{p}}
+\newcommand{\qq}{\mathsf{q}}
+\newcommand{\ttt}{\mathsfit{t}}
+\newcommand{\tol}{\varepsilon}
+\newcommand{\bt}{\mathbf{t}}
+\newcommand{\br}{\mathbf{r}}
+\newcommand{\dd}{\mathbf{d}}
+\newcommand{\ii}{\mathbf{i}}
+\newcommand{\jj}{\mathbf{j}}
+\newcommand{\xx}{\mathbf{x}}
+\renewcommand{\pp}{\mathbf{p}}
+\renewcommand{\ggg}{\mathbf{g}}
+\newcommand{\GG}{\mathbf{G}}
+\DeclareMathOperator{\expc}{\mathbb{E}}
+\renewcommand{\Pr}{\mathbb{P}}
+\newcommand{\lb}{\underline}
+\newcommand{\ub}{\overline}
+
+% mathlcal font
+\DeclareFontFamily{U}{dutchcal}{\skewchar\font=45 }
+\DeclareFontShape{U}{dutchcal}{m}{n}{<-> s*[1.0] dutchcal-r}{}
+\DeclareFontShape{U}{dutchcal}{b}{n}{<-> s*[1.0] dutchcal-b}{}
+\DeclareMathAlphabet{\mathlcal}{U}{dutchcal}{m}{n}
+\SetMathAlphabet{\mathlcal}{bold}{U}{dutchcal}{b}{n}
+
+% mathscr font (supporting lowercase letters)
+%\usepackage[scr=dutchcal]{mathalfa}
+%\usepackage[scr=esstix]{mathalfa}
+%\usepackage[scr=boondox]{mathalfa}
+%\usepackage[scr=boondoxo]{mathalfa}
+\usepackage[scr=boondoxupr]{mathalfa}
+%\newcommand{\model}{\mathscr{h}}
+\newcommand{\model}{\tilde{f}}
+\newcommand{\rmod}{F}
+
+\newcommand{\Set}[1]{\mathcal{#1}}
+\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it} % The mathpzc font
+\newcommand{\slv}{\mathpzc}
+% mathpzc looks great, but it stops working on 19 Feb 2020 for no reason.
+%\newcommand{\slv}{\mathscr}
+\newcommand{\software}{\texttt}
+\DeclareMathOperator{\eff}{\mathsf{e}\;\!}
+\DeclareMathOperator{\Eff}{\mathsf{E}\;\!}
+\newcommand{\out}{{\text{out}}}
+
+
+%% Commands for revision
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\green}[1]{\textcolor{darkgreen}{#1}}
+\newcommand{\TYPO}[1]{{\color{orange}{#1}}}
+\newcommand{\MISTAKE}[1]{{\color{violet}{#1}}}
+\newcommand{\REPHRASE}[1]{{\color{darkgreen}{#1}}}
+\newcommand{\REVISE}[1]{{\color{blue}{#1}}}
+\newcommand{\REVISEred}[1]{{\color{red}{#1}}}
+\newcommand{\COMMENT}{\todo}  % Needs the todonotes package
+%\newcommand{\COMMENT}[1]{\textcolor{brown}{{\small{(comment: #1)}}}}  % This puts comments inline
+
+% Use the following if revision is finished
+%\newcommand{\TYPO}{}
+%\newcommand{\MISTAKE}{}
+%\newcommand{\REPHRASE}{}
+%\newcommand{\REVISE}{}
+%\newcommand{\REVISEred}{}
+%\newcommand{\COMMENT}[1]{}  % Input ignored.
+
+% 添加 tcolorbox 支持你的自定义定理环境
+\usepackage{tcolorbox}
+\tcbuselibrary{theorems,breakable}
+\newenvironment{badtheorem}
+{\begin{tcolorbox}[colback=blue!5, colframe=blue!75!black, title=Theorem~\thetheorem~(bad)]}
+	{\end{tcolorbox}}
+\newenvironment{goodtheorem}
+{\begin{tcolorbox}[colback=blue!5, colframe=blue!75!black, title=Theorem~\thetheorem~(good)]}
+	{\end{tcolorbox}%
+	\addtocounter{theorem}{-1}} 
+
+\renewenvironment{proof}[1][\proofname]
+{\begin{tcolorbox}[
+		colback=blue!5,
+		colframe=blue!75!black,
+		title=#1,
+		fonttitle=\bfseries,
+		breakable
+		]}
+	{\end{tcolorbox}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{A Handout of Mathematical Writing}
+
+\date{\DTMnow}
+
+\author{Cai Xuanyang
+	\thanks{}
+}
+
+
+\begin{document}
+	
+	\maketitle
+	
+	\begin{abstract}
+		This handout is designed for learners of mathematical writing and systematically presents 
+		the core principles and common problems in this field.
+		
+		We begin by analyzing and modifying a poorly written proof to demonstrate fundamental 
+		principles of mathematical writing. Next, we discuss writing style and artistry. 
+		Finally, we conclude with techniques for proofreading and typesetting.   
+	\end{abstract}
+	
+	% 蓝色目录
+	{\color{blue}
+		\tableofcontents
+	}
+	
+	\newpage
+	
+	\section{Introduction: Importance of Standardized Writing}
+	
+	Mathematical writing is not a supplement to mathematical work, but an inseparable 
+	aspect of mathematical work. 
+	
+	Excellent mathematical writing clarifies ideas, enhances understanding, and ensures 
+	accurate knowledge dissemination. However, many learners face problems that may 
+	increase the cost of understanding and even conceal and stifle correct ideas, such 
+	as abusing symbols, messy structure, and lack of reader awareness.
+	
+	This handout is based on \textit{Mathematical Writing} by Donald E. Knuth, and 
+	I hope that it can offer some inspiration for your mathematical writing.
+	
+	\section{Core Principles for Mathematical Writing}
+	
+	This section is divided into three parts. In this section, we will read a poorly 
+	written proof, then summarize the core principles that make writing clear, and 
+	modify the bad proof.
+	
+	\subsection{Example: A Poorly Written Proof}
+	
+	In this part, we will read a poorly written proof presented as follows.
+	
+	\begin{theorem}
+		If $L(C,P) \subseteq A_n$ and $C \neq \emptyset$, then $C\subseteq A_n$ and $P\subseteq A_n$.
+	\end{theorem}
+	
+	\begin{proof}
+		Assume that $L(C,P) \subseteq A_n$. Since $C$ is always contained in $L(C,P)$, 
+		we must have $C \subseteq A_n$. Therefore, we only need to verify that $P \subseteq A_n$.
+		
+		Suppose, for contradiction, that $P$ is not contained in $A_n$. Then there exists 
+		a vector $\mathbf{b} = (b_1,\ldots,b_n) \in P$ and indices $i<j$ such that $b_i<b_j$. 
+		We will show that this leads to a contradiction.
+		
+		Since $C$ is nonempty, it contains some element $\mathbf{c}=(c_1,\ldots,c_n)$. 
+		We know that the components of this vector satisfy $c_1 \geq \cdots \geq c_n$, 
+		because $C \subseteq A_n$. 
+		
+		Now, for any $k \geq 0$, the vector $\mathbf{c}+k \mathbf{b}$ is an element of $A_n$. 
+		In particular, if we take $k=c_i-c_j+1$, we have $k \geq 1$, and 
+		\[
+		c_i+kb_i \geq c_j+kb_j,
+		\]
+		which implies
+		\[
+		c_i-c_j \geq k(b_j-b_i).
+		\]
+		
+		But $c_i-c_j=k-1$, and since $b_j-b_i \geq 1$, the inequality $k(b_j - b_i) \geq k$ 
+		holds. This gives us 
+		\[
+		k-1 \geq k,
+		\]
+		which is impossible. It follows that $\mathbf{b}$ must be an element of $A_n$, 
+		which means that $P \subseteq A_n$.
+	\end{proof}
+	
+	\subsection{Analysis of the Poorly Written Proof}
+	
+	In this part, we will analyze the proof and present the problems sentence by sentence.
+	
+	The original poorly written proof contained the following issues:
+	
+	\begin{enumerate}
+		\item \textbf{Original:} $L(C,P) \subseteq A_n$
+		
+		\textbf{Problems:}
+		\begin{itemize}
+			\item Do not start a sentence with a symbol
+			\item Do not use an isolated formula
+		\end{itemize}
+		
+		\item \textbf{Original:} $C \subset L \Rightarrow C \subset A_n$
+		
+		\textbf{Problem:} Do not use logical symbols $\forall$, $\exists$, $\Rightarrow$; 
+		replace them with corresponding words
+		
+		\item \textbf{Original:} $\text{Spec} \quad p \in P, p \notin A_n \Rightarrow p_i<p_j \quad \text{for} \quad i,j$
+		
+		\textbf{Problems:}
+		\begin{itemize}
+			\item Avoid spelling errors: "Spec" is a misspelling of "Suppose"
+			\item Do not use undefined symbols: Symbols $p_i$, $p_j$, $i$, $j$ are used without definition
+		\end{itemize}
+		
+		\item \textbf{Original:} $c+p \in L \subset A_n$
+		
+		\textbf{Problem:} Symbols in different formulas should be separated by connecting words
+		
+		\item \textbf{Original:} $\because c_i+p_i \geq c_j+p_j \quad \text{but} \quad c_i \geq c_j \geq 0,p_j \geq p_i \therefore (c_i-c_j) \geq (p_i-p_j)$
+		
+		\textbf{Problem:} Abuse of subscripts makes the sentence ugly and hard to read
+		
+		\item \textbf{Original:} $\text{but} \quad \exists \quad \text{a constant} \quad k \ni c+kp \notin A_n$
+		
+		\textbf{Problem:} Different relations should be divided into two parts: 
+		The expression "$k \ni c+kp \notin A_n$" is not a single relation
+		
+		\item \textbf{Original:} $\text{let} \quad k=(c_i-c_j)+1 \qquad c+kp \in L \subset A_n$
+		
+		\textbf{Problem:} Two key steps should be divided into two lines and linked by connecting words
+		
+		\item \textbf{Original:} $\because c_i+kp_i \geq c_j+kp_j \Rightarrow (c_i-c_j) \geq k(p_j-p_i)$ 
+		$\Rightarrow k-1 \geq k \cdot m \qquad k,m \geq 1 \qquad \text{Contradiction}$
+		
+		\textbf{Problem:} Do not use sentence fragments: "Contradiction" is not a complete sentence
+		
+		\item \textbf{Original:} $\because p \in A_n$
+		
+		\textbf{Problem:} Do not use a single $\because$ or use $\because$ continuously
+		
+		\item \textbf{Original:} $\because L(C,P) \subset A_n \Rightarrow C,P \subset A_n \quad \text{and the lemma is true.}$
+		
+		\textbf{Problem:} Theorem, Lemma, Algorithm, Method should be capitalized
+	\end{enumerate}
+	
+	\subsection{Modified Version: A Standard Proof}
+	
+	In this part, we present an improved version after modification based on Knuth's core principles.
+	
+	\begin{theorem}
+		If $L(C,P) \subseteq A_n$ and $C \neq \emptyset$, then $C\subseteq A_n$ and $P\subseteq A_n$.
+	\end{theorem}
+	
+	\begin{proof}
+		Assume that $L(C,P) \subseteq A_n$. Since $C$ is always contained in $L(C,P)$, 
+		we must have $C \subseteq A_n$. Therefore, we only need to verify that $P \subseteq A_n$.
+		
+		Suppose, for contradiction, that $P$ is not contained in $A_n$. Then there exists 
+		a vector $\mathbf{b} = (b_1,\ldots,b_n) \in P$ and indices $i<j$ such that $b_i<b_j$. 
+		We will show that this leads to a contradiction.
+		
+		Since $C$ is nonempty, it contains some element $\mathbf{c}=(c_1,\ldots,c_n)$. 
+		We know that the components of this vector satisfy $c_1 \geq \cdots \geq c_n$, 
+		because $C \subseteq A_n$. 
+		
+		Now, for any $k \geq 0$, the vector $\mathbf{c}+k \mathbf{b}$ is an element of $A_n$. 
+		In particular, if we take $k=c_i-c_j+1$, we have $k \geq 1$, and 
+		\[
+		c_i+kb_i \geq c_j+kb_j,
+		\]
+		which implies
+		\[
+		c_i-c_j \geq k(b_j-b_i).
+		\]
+		
+		But $c_i-c_j=k-1$, and since $b_j-b_i \geq 1$, the inequality $k(b_j - b_i) \geq k$ 
+		holds. This gives us 
+		\[
+		k-1 \geq k,
+		\]
+		which is impossible. It follows that $\mathbf{b}$ must be an element of $A_n$, 
+		which means that $P \subseteq A_n$.
+	\end{proof}
+	
+	The revised version demonstrates significant advantages in \textbf{academic rigor} 
+	and \textbf{expository standards}. First, it employs complete sentences and 
+	standardized mathematical terminology to construct a well-structured argumentative 
+	framework. This approach avoids non-standard symbols and abbreviated expressions, 
+	ensuring each step has clear causes and consequences.
+	
+	Second, the revised version adheres to fundamental principles of mathematical writing. 
+	By unifying symbolic notation, clearly defining domains, and standardizing reference 
+	mechanisms, it effectively avoids common ambiguities. This enhances reliability and 
+	reflects professional requirements.
+	
+	Finally, the revised version achieves both \textbf{reproducibility} and \textbf{verifiability}. 
+	Its clear exposition enables researchers to comprehend the proof's rationale and 
+	accurately assess its value, facilitating academic consensus and knowledge accumulation.
+	
+	Through systematic writing standards, this version transforms mathematical proofs 
+	from personalized symbolic records into public knowledge carriers that meet academic 
+	standards, ensuring both rigor and efficiency in scholarly communication.
+	
+	\section{Writing Style and Artistry}
+	
+	\textit{``A mathematical paper should be written so that it is easy to understand, 
+		and so that it is a pleasure to read.''} — Donald E. Knuth
+	
+	This statement elevates mathematical writing from mere clarity to genuine artistry, 
+	sitting at the intersection of rigorous science and expressive arts.
+	
+	\subsection{The Author's Duty: Clarity and Structure}
+	
+	The author's duty is to make the reader's task as easy as possible. This principle 
+	demands unwavering focus on the reader's experience.
+	
+	\subsubsection{The Art of Explanation}
+	
+	Knuth illustrates this with an example: he once wrote ``The bottom of this page 
+	is intentionally left blank,'' forcing readers to check unnecessarily. The better 
+	version: ``This page is intentionally mostly blank.'' This small change demonstrates 
+	anticipating and eliminating potential reader confusion.
+	
+	\subsubsection{The Symphony of Structure}
+	
+	Good mathematical writing has clear, precise, logical thinking but also follows 
+	classical three-part structure like good storytelling: beginning, middle, and end. 
+	A well-written proof states what will be proved, develops the argument step by step, 
+	and summarizes accomplishments, creating a satisfying narrative arc.
+	
+	\subsection{The Aesthetic Dimension: Pursuing Elegance}
+	
+	The best mathematical writing has artistry about it—not only correct, but beautiful.
+	
+	\subsubsection{The Aesthetics of Notation}
+	
+	Every symbol, word, and punctuation mark should earn its place. Knuth shows how 
+	``$1 + 2 + \cdots + n = \frac{n(n + 1)}{2} = O(n^2)$'' can be misinterpreted, 
+	whereas ``$1 + 2 + \cdots + n = \frac{n(n + 1)}{2}$, so the sum is $O(n^2)$'' 
+	is clearer and more elegant. Artistry lies in knowing when to replace symbols with words.
+	
+	\subsubsection{The Elegance of a Proof}
+	
+	Knuth admires ``graceful'' proofs. For $1^3 + 2^3 + \cdots + n^3 = (1 + 2 + \cdots + n)^2$, 
+	algebraic induction is correct but clumsy. The elegant proof observes the sum can 
+	be represented by a square of squares, whose area is obviously $(1 + 2 + \cdots + n)^2$. 
+	This geometric insight transforms verification into understanding.
+	
+	\subsection{The Craft: Writing is Rewriting}
+	
+	Writing is rewriting. No one gets it right the first time.
+	
+	\subsubsection{The Reader as Collaborator}
+	
+	Write as if explaining ideas to a respected colleague. Knuth sends drafts to hundreds 
+	of colleagues, incorporating feedback to create ``dialogue with the reader,'' where 
+	text anticipates and answers questions before they form.
+	
+	\subsubsection{The Test of the Ear}
+	
+	Read your work aloud. If it sounds awkward to your ear, it will read awkwardly 
+	to your reader's eye. Knuth revised ``The height of the box is its depth plus its height'' 
+	to ``The total height of the box equals its depth plus its height,'' eliminating confusion.
+	
+	\subsection{The Ultimate Test}
+	
+	The ultimate test: Does it make mathematics seem beautiful? Knuth finds this in 
+	Euler's formula $e^{i\pi} + 1 = 0$, connecting five fundamental constants. This 
+	exemplifies not just showing you know something, but showing you want others to know it too.
+	
+	\section{Revision: Proofreading and Typesetting}
+	
+	\textit{``The difference between a good paper and a great paper often lies in 
+		careful proofreading and elegant typesetting.''} — Donald E. Knuth
+	
+	\subsection{The Necessity of Proofreading}
+	
+	No manuscript is perfect in its first draft; proofreading is essential. Knuth 
+	recommends a ``three-pass system.''
+	
+	\subsubsection{The First Pass: Content Verification}
+	
+	Focus solely on mathematical content. Read backwards, theorem by theorem, to catch 
+	logical errors. Verify:
+	\begin{itemize}
+		\item All theorems correctly stated
+		\item Proofs logically sound  
+		\item No missing steps in arguments
+		\item All assumptions explicitly stated
+	\end{itemize}
+	
+	\subsubsection{The Second Pass: Language and Style}
+	
+	Focus on writing itself. Read aloud—your ear catches what your eye misses. Check:
+	\begin{itemize}
+		\item Grammatical errors and awkward phrasing
+		\item Consistent notation and terminology
+		\item Proper transitions between ideas
+		\item Elimination of unnecessary repetition
+	\end{itemize}
+	
+	\subsubsection{The Third Pass: Typographical Details}
+	
+	Hawk-eyed reading for small errors:
+	\begin{itemize}
+		\item Spelling mistakes and typos
+		\item Punctuation errors
+		\item Proper citation formatting
+		\item Consistent numbering of equations and theorems
+	\end{itemize}
+	
+	\subsection{The Art of Typesetting}
+	
+	Good mathematical typesetting makes structure visible to the reader.
+	
+	\subsubsection{Spacing and Alignment}
+	
+	Different mathematical objects require different spacing. In $f(x, y)$, comma has 
+	space after but not before; in $\{x, y, z\}$ spacing should be balanced. Displayed 
+	equations should be properly centered and numbered. Alignment in multi-line equations 
+	should make mathematical structure clear.
+	
+	Proper spacing helps parse complex expressions without conscious effort.
+	
+	\subsubsection{Choosing the Right Symbols}
+	
+	Use distinct symbols for different concepts. Avoid visually similar symbols in 
+	same context ($\theta$ and $\vartheta$, $O$ and $0$). Prefer standard notation 
+	over confusing alternatives. The best notation disappears, allowing mathematics 
+	to speak for itself.
+	
+	\subsubsection{The \TeX\ Philosophy}
+	
+	Let computer handle routine formatting decisions. Provide fine control for mathematical 
+	elegance. Ensure consistency throughout document. Make source code readable and 
+	maintainable. Beautiful typesetting shows respect for both mathematics and reader.
+	
+	\subsection{Practical Proofreading Techniques}
+	
+	\subsubsection{The Fresh Eye Method}
+	
+	Set work aside for at least three days before final proofreading. Distance allows 
+	seeing it as reader would, not as writer who knows what was intended.
+	
+	\subsubsection{The Multiple Reader Approach}
+	
+	Have at least three types of readers:
+	\begin{itemize}
+		\item Expert in field for technical accuracy
+		\item Mathematician from different field for clarity
+		\item Non-mathematician for overall readability
+	\end{itemize}
+	
+	\subsubsection{The Checklist System}
+	
+	Create personalized checklist of common errors:
+	\begin{itemize}
+		\item Check all cross-references
+		\item Verify all promised results delivered
+		\item Ensure every ``note that'' actually noteworthy
+		\item Confirm all temporary notation properly defined and later discarded
+	\end{itemize}
+	
+	\subsection{The Writer's Responsibility}
+	
+	Final responsibility for clear, correct, beautiful paper rests entirely with author. 
+	Proofreading and typesetting are integral parts of writing process. Poorly proofread 
+	paper with sloppy typesetting will be harder to read and less influential.
+	
+	We write mathematics to be read, not just to be correct. Care taken demonstrates 
+	respect for reader and mathematics itself. When done well, these steps transform 
+	good mathematical argument into great mathematical paper that stands test of time.
+	
+	\section{Conclusion: How to Write an Elegant Work}
+	
+	Mathematical writing is both art and science. Through this handout, we have learned 
+	that developing writing incorporates three dimensions: \textbf{Understanding Core Principles}, 
+	\textbf{Using Unique and Elegant Writing Style}, and \textbf{Continuous Revision}. 
+	With deeper insight into these dimensions, you can improve your mathematical writing.
+	
+\end{document}

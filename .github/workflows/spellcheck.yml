@@ -1,0 +1,57 @@
+name: Spell Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  spellcheck:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+        
+    - name: Install aspell and dictionaries
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y aspell aspell-en
+        
+    - name: Run spell check on LaTeX files
+      run: |
+        echo "Running spell check on LaTeX files..."
+        for file in $(find . -name "*.tex" -type f); do
+          echo "Checking $file"
+          aspell --lang=en --mode=tex list < "$file" | sort -u > "$file.spell-errors"
+          if [ -s "$file.spell-errors" ]; then
+            echo "Spelling errors found in $file:"
+            cat "$file.spell-errors"
+            echo "----------------------------------------"
+          else
+            echo "No spelling errors found in $file"
+          fi
+        done
+        
+    - name: Check for spelling errors
+      run: |
+        total_errors=0
+        for error_file in $(find . -name "*.spell-errors" -type f); do
+          if [ -s "$error_file" ]; then
+            error_count=$(wc -l < "$error_file")
+            total_errors=$((total_errors + error_count))
+          fi
+        done
+        
+        if [ $total_errors -gt 0 ]; then
+          echo "Found $total_errors spelling errors in total"
+          echo "Please check the spell check output above"
+          exit 1
+        else
+          echo "No spelling errors found! ✓"
+        EOF
